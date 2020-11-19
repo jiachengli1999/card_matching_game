@@ -1,19 +1,43 @@
 let grid_container = $('.grid-container')
-let images = ['astrologian', 'bard', 'black_mage', 'blue_mage', 'dancer', 
+let amongUsImages = ['astrologian', 'bard', 'black_mage', 'blue_mage', 'dancer', 
                 'dark_knight', 'Dragoon', 'gun', 'gunbreaker', 'monk', 'ninja', 
-                'paladin']
+                'paladin', 'red_mage', 'samurai', 'scholar', 'summoner', 
+                'warrior', 'white_mage']
 let background = 'none'
 let clickedCard = null 
 let clicked_id = null 
 let canClick = false 
 let matched = 0
+let themeSelected = false
+
+
+function rand(max) {
+    return Math.floor(Math.random() * max);
+}
+
+//picks desired amount of random images from your available assets
+const pickRandomImages = (images, numberOfPairs) => {
+    let currentImages = new Set();
+    while (numberOfPairs !== 0) {
+        let image = images[rand(images.length)];
+        if (currentImages.has(image)){
+            continue;
+        }
+        else {
+            currentImages.add(image);
+        }
+        numberOfPairs--;
+    }
+    return Array.from(currentImages);
+}
 
 // shuffle referenced from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array) {
+    console.log(array);
     // dup values in array to get two of the same card in array
     let res = array.slice()
-    for (let i=0; i < images.length; i++){
-        res.push(images[i])
+    for (let i=0; i < array.length; i++){
+        res.push(array[i])
     }
 
     // randomize values
@@ -28,8 +52,58 @@ function shuffle(array) {
         res[currentIndex] = res[randomIndex];
         res[randomIndex] = temporaryValue;
     }
-    
+    console.log(res);
     return res;
+}
+
+const dropdownListener = () => {
+    $('.dropbtn').on('click', () => {
+        $('.dropdown-content').toggle();
+    });
+}
+
+const dropdownOptionsListners = () => {
+    $('#among-us-option').on('click', () => {
+        $('body').css({
+            "background" : "url('./among_us_assets/among-us-background.jpg')",
+            "background-size" : "cover"
+        });
+        $('#header').text('AMONG US').css({
+            "color":"#ffffff",
+            "font-family": "'Amatic SC', cursive",
+            "font-size" : "3rem"
+        });
+        $('.initial-card').css("border", "1px solid white");
+        $('body').append("\
+        <audio id='bgm' controls autoplay loop> \
+            <source src='./among_us_assets/Among_Us.mp3' type='audio/mpeg'> \
+        </audio>");
+
+    });
+
+    //enable start button once a theme has been selected
+    $('.start-btn').prop("disabled",false);
+}
+
+
+dropdownListener();
+dropdownOptionsListners();
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      let dropdowns = $(".dropdown-content");
+       /* if we have multiple dropdowns
+
+      for (let i = 0; i < dropdowns.length; i++) {
+        let openDropdown = dropdowns[i];
+        console.log(typeof(openDropdown));
+        openDropdown.hide();
+      }
+      */
+
+      dropdowns.hide();
+    }
 }
 
 function main(){
@@ -43,7 +117,7 @@ function main(){
     matched = 0
 
     // shuffle
-    let cards = shuffle(images)
+    let cards = shuffle(pickRandomImages(amongUsImages, 12));
     //set back of card
     background = "url('./among_us_assets/among_us.PNG')"
 
