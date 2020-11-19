@@ -33,9 +33,12 @@ function shuffle(array) {
 }
 
 function main(){
+    //disable button 
+    $('.start-btn').prop("disabled",true);
+
     // reset
     clickedCard = null 
-    clickded_id = null 
+    clicked_id = null 
     canClick = false 
     matched = 0
 
@@ -67,6 +70,9 @@ function main(){
         setTimeout(function(){
             $('#inner-card-'+i).toggleClass('flipped')
             canClick = true
+            reset = true
+            // re-able button
+            $('.start-btn').prop("disabled",false);
         }, 2000)
     }
 
@@ -80,6 +86,7 @@ function cardListener(cards){
         let card_id = $(this).attr('id')
         // card can be clicked if not already matched, not the same card, and currently not comparing two cards
         console.log($(this).attr('class'))
+        console.log(clickedCard, clicked_id)
         if (!($(this).hasClass('matched')) && canClick && card_id != clicked_id){
             // flip card to image
             $('#inner-card-'+card_id).toggleClass('flipped')
