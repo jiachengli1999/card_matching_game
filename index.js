@@ -4,7 +4,7 @@ let images = ['astrologian', 'bard', 'black_mage', 'blue_mage', 'dancer',
                 'paladin']
 let background = 'none'
 let clickedCard = null 
-let cardid = null 
+let clicked_id = null 
 let canClick = false 
 let matched = 0
 
@@ -35,7 +35,7 @@ function shuffle(array) {
 function main(){
     // reset
     clickedCard = null 
-    cardid = null 
+    clickded_id = null 
     canClick = false 
     matched = 0
 
@@ -48,14 +48,24 @@ function main(){
     grid_container.empty();
     for (let i=0; i < 24; i++){
         // style=\"background-image: url('./among_us_assets/"+cards[i]+".PNG');\"
-        grid_container.append($("<div class='card "+cards[i]+"' id='card-"+i+"'></div>"))
-        $('#card-'+i).css('background-image', "url('./among_us_assets/"+cards[i]+".PNG')")
+        grid_container.append($(" \
+        <div class='card "+cards[i]+"' id='"+i+"'> \
+            <div class='flip-card-inner' id='inner-card-"+i+"'> \
+                <div class='flip-card-front' id='front-"+i+"'></div> \
+                <div class='flip-card-back' id='back-"+i+"'></div> \
+            </div> \
+        </div>"
+        ))
+        // add front image
+        $('#front-'+i).css('background-image', "url('./among_us_assets/"+cards[i]+".PNG')")
+        // add back image
+        $('#back-'+i).css('background-image', "url('./among_us_assets/among_us.PNG')")
     }
 
     // hide cards after some time
     for (let i=0; i < cards.length; i++){
         setTimeout(function(){
-            $('#card-'+i).css('background-image', background)
+            $('#inner-card-'+i).toggleClass('flipped')
             canClick = true
         }, 2000)
     }
@@ -66,36 +76,36 @@ function main(){
 
 function cardListener(cards){
     grid_container.find('.card').bind('click', function(){
+        // get card id
+        let card_id = $(this).attr('id')
         // card can be clicked if not already matched, not the same card, and currently not comparing two cards
-        if (!($(this).hasClass('matched')) && canClick && $(this).attr('id') != cardid){
-            // get image name
-            let card_name = $(this).attr('class').split(/\s+/)[1]
-            // assign image to clicked card
-            $(this).css('background-image', "url('./among_us_assets/"+card_name+".PNG')")
-            $(this).addClass('open')
+        console.log($(this).attr('class'))
+        if (!($(this).hasClass('matched')) && canClick && card_id != clicked_id){
+            // flip card to image
+            $('#inner-card-'+card_id).toggleClass('flipped')
 
             // assign first card if it's the first card 
             if (clickedCard === null){
                 clickedCard = $(this).attr('class')
-                cardid = $(this).attr('id')
-                // console.log('clickedcard:', clickedCard, cardid)
+                clicked_id = card_id
+                // console.log('clickedcard:', clickedCard, clicked_id)
             }
             // else compare the two clicked cards
             else{
                 canClick = false
                 // if match keep on board 
                 if ($(this).attr('class') === clickedCard){
-                    grid_container.find('.open').addClass('matched');
-                    grid_container.find('.matched').removeClass('open');
+                    console.log('matched')
+                    $(this).addClass('matched');
+                    $('#'+clicked_id).addClass('matched');
                     matched++;
-                    // console.log('matched')
                     canClick = true
                 }
-                // if not a match, then flip over 
+                // if not a match, then flip them over
                 else{
                     setTimeout(function () {
-                        grid_container.find('.open').css('background-image', background)
-                        grid_container.find('.open').removeClass('open'); 
+                        $('#inner-card-'+card_id).toggleClass('flipped')
+                        $('#inner-card-'+clicked_id).toggleClass('flipped')
                         canClick = true
                     },1000)
                 }
@@ -105,6 +115,7 @@ function cardListener(cards){
             // win 
             if (matched === cards.length/2){
                 console.log('win')
+                canClick = false
             }
         }
     })
