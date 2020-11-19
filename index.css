@@ -4,10 +4,20 @@
     box-sizing: border-box;
 }
 
+body{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+body > *{
+    padding: 10px;
+}
+
 .grid-container{
     display: grid;
-    grid-template-columns: repeat(6, 250px);
-    grid-template-rows: repeat(4, 250px);
+    grid-template-columns: repeat(6, 150px);
+    grid-template-rows: repeat(4, 150px);
     grid-gap: 10px;
 }
 
@@ -15,10 +25,12 @@
     height: 100%;
     width: 100%;
     border: 1px solid black;
+    background-size: cover;
+    background-position: center;
 }
 
 #card-1{
-    background-image: url('./among_us_assets/astrologian.PNG');
+    /* background-image: url('./among_us_assets/astrologian.PNG'); */
     background-size: cover;
     background-position: center;
 }
