@@ -79,10 +79,9 @@ const dropdownOptionsListners = () => {
             <source src='./among_us_assets/Among_Us.mp3' type='audio/mpeg'> \
         </audio>");
 
+        //enable start button once a theme has been selected
+        $('.start-btn').removeAttr("disabled");
     });
-
-    //enable start button once a theme has been selected
-    $('.start-btn').prop("disabled",false);
 }
 
 
@@ -108,7 +107,7 @@ window.onclick = function(event) {
 
 function main(){
     //disable button 
-    $('.start-btn').prop("disabled",true);
+    $('.start-btn').attr("disabled","disabled");
 
     // reset
     clickedCard = null 
@@ -145,8 +144,9 @@ function main(){
             $('#inner-card-'+i).toggleClass('flipped')
             canClick = true
             reset = true
-            // re-able button
-            $('.start-btn').prop("disabled",false);
+            // re-enable button
+            // $('.start-btn').prop("disabled",false);
+            $('.start-btn').removeAttr("disabled");
         }, 2000)
     }
 
@@ -196,8 +196,16 @@ function cardListener(cards){
             // win 
             if (matched === cards.length/2){
                 console.log('win')
+                $('.win-container').css('display', 'flex')
                 canClick = false
             }
         }
     })
+}
+
+// close win message when click outside content 
+window.onclick = function(event) {
+    if (event.target.matches('.win-container')) {
+        $('.win-container').css('display', 'none')
+    }
 }
