@@ -3,18 +3,48 @@ let amongUsImages = ['astrologian', 'bard', 'black_mage', 'blue_mage', 'dancer',
                 'dark_knight', 'Dragoon', 'gun', 'gunbreaker', 'monk', 'ninja', 
                 'paladin', 'red_mage', 'samurai', 'scholar', 'summoner', 
                 'warrior', 'white_mage']
-let background = 'none'
+let maplestory_images = ['horny_mushroom', 'berserk_horny_mushroom', 'stump', 
+                'dessert_rabbit', 'laloong','moon_bunny', 'peace_spirit', 'pepe', 
+                'racoco', 'red_snail', 'shroom', 'swamp_monster']
+let back_image = 'none'
 let clickedCard = null 
 let clicked_id = null 
 let canClick = false 
 let matched = 0
 let themeSelected = false
+let curr_asset = 'among_us_assets'
+let selected_images = amongUsImages
 let p1_score = 0
 let p2_score = 0
 let p1_game_score = 0
 let p2_game_score = 0
 let curr_player = 'player1'
-
+let initial_state = "\
+<div class='initial-card' id='1'></div>\
+<div class='initial-card' id='2'></div>\
+<div class='initial-card' id='3'></div>\
+<div class='initial-card' id='4'></div>\
+<div class='initial-card' id='5'></div>\
+<div class='initial-card' id='6'></div>\
+<div class='initial-card' id='7'></div>\
+<div class='initial-card' id='8'></div>\
+<div class='initial-card' id='9'></div>\
+<div class='initial-card' id='10'></div>\
+<div class='initial-card' id='11'></div>\
+<div class='initial-card' id='12'></div>\
+<div class='initial-card' id='13'></div>\
+<div class='initial-card' id='14'></div>\
+<div class='initial-card' id='15'></div>\
+<div class='initial-card' id='16'></div>\
+<div class='initial-card' id='17'></div>\
+<div class='initial-card' id='18'></div>\
+<div class='initial-card' id='19'></div>\
+<div class='initial-card' id='20'></div>\
+<div class='initial-card' id='21'></div>\
+<div class='initial-card' id='22'></div>\
+<div class='initial-card' id='23'></div>\
+<div class='initial-card' id='24'></div>\
+"
 
 function rand(max) {
     return Math.floor(Math.random() * max);
@@ -69,6 +99,8 @@ const dropdownListener = () => {
 
 const dropdownOptionsListners = () => {
     $('#among-us-option').on('click', () => {
+        grid_container.empty()
+        grid_container.append(initial_state)
         $('body').css({
             "background" : "url('./among_us_assets/among-us-background.jpg')",
             "background-size" : "cover"
@@ -79,6 +111,10 @@ const dropdownOptionsListners = () => {
             "font-size" : "3rem"
         });
         $('.initial-card').css("border", "1px solid white");
+        $('audio').each(function(){
+            this.pause(); // Stop playing
+            this.currentTime = 0; // Reset time
+        }); 
         $('body').append("\
         <audio id='bgm' controls autoplay loop> \
             <source src='./among_us_assets/Among_Us.mp3' type='audio/mpeg'> \
@@ -88,16 +124,60 @@ const dropdownOptionsListners = () => {
         $('.score-container').css({
             "color":"#ffffff",
             "font-family": "'Amatic SC', cursive",
-            "font-size" : "3rem",
+            "font-size" : "1.5rem",
         });
         $('.win-container').css({
             "color":"black",
             "font-family": "'Amatic SC', cursive",
             "font-size" : "3rem",
         })
+        curr_asset = 'among_us_assets'
+        //set back of card
+        back_image = "url('./among_us_assets/among_us.PNG')"
         //enable start button once a theme has been selected
         $('.start-btn').removeAttr("disabled");
+        selected_images = amongUsImages
+        
     });
+
+    $('#maplestory-option').on('click', () => {
+        grid_container.empty()
+        grid_container.append(initial_state)
+        $('body').css({
+            "background" : "url('./maplestory_assets/maplestory_background.PNG')",
+            "background-size" : "cover"
+        });
+        $('#header').text('Maplestory').css({
+            "color":"#ffffff",
+            "font-family": "Maplestory",
+            "font-size" : "3rem"
+        });
+        $('.initial-card').css("border", "1px solid black");
+        $('audio').each(function(){
+            this.pause(); // Stop playing
+            this.currentTime = 0; // Reset time
+        }); 
+        $('body').append("\
+        <audio id='bgm' controls autoplay loop> \
+            <source src='./maplestory_assets/maplestory.mp3' type='audio/mpeg'> \
+        </audio>");
+        $('.score-container').css({
+            "color":"black",
+            "font-family": "Maplestory",
+            "font-size" : "2rem",
+        });
+        $('.win-container').css({
+            "color":"black",
+            "font-family": "Maplestory",
+            "font-size" : "3rem",
+        })
+        $('.player1').css('background-image', "url('./maplestory_assets/alpha.PNG')")
+        $('.player2').css('background-image', "url('./maplestory_assets/beta.PNG')")
+        back_image = "url('./maplestory_assets/maplestory_back.PNG')"
+        curr_asset = 'maplestory_assets'
+        selected_images = maplestory_images
+        $('.start-btn').removeAttr("disabled");
+    })
 }
 
 
@@ -133,16 +213,15 @@ function main(){
     p1_score = 0
     p2_score = 0
     curr_player = 'player1'
+    $('.player1').css('box-shadow', 'none')
+    $('.player2').css('box-shadow', 'none')
 
     // shuffle
-    let cards = shuffle(pickRandomImages(amongUsImages, 12));
-    //set back of card
-    background = "url('./among_us_assets/among_us.PNG')"
+    let cards = shuffle(pickRandomImages(selected_images, 12));
 
     // Make grid
     grid_container.empty();
     for (let i=0; i < 24; i++){
-        // style=\"background-image: url('./among_us_assets/"+cards[i]+".PNG');\"
         grid_container.append($(" \
         <div class='card "+cards[i]+"' id='"+i+"'> \
             <div class='flip-card-inner' id='inner-card-"+i+"'> \
@@ -152,9 +231,9 @@ function main(){
         </div>"
         ))
         // add front image
-        $('#front-'+i).css('background-image', "url('./among_us_assets/"+cards[i]+".PNG')")
+        $('#front-'+i).css('background-image', "url('./"+curr_asset+"/"+cards[i]+".PNG')")
         // add back image
-        $('#back-'+i).css('background-image', "url('./among_us_assets/among_us.PNG')")
+        $('#back-'+i).css('background-image', back_image)
     }
 
     // hide cards after some time
@@ -168,7 +247,7 @@ function main(){
     }
 
     // highlight curr_player turn
-    $('.player1').css('border', '1px solid white')
+    $('.player1').css('box-shadow', '-1px 1px 5px 4px red')
 
     // add click listener for each card
     cardListener(cards)
@@ -208,13 +287,13 @@ function cardListener(cards){
                         $('#inner-card-'+card_id).toggleClass('flipped')
                         $('#inner-card-'+clicked_id).toggleClass('flipped')
                         if (curr_player === 'player1'){
-                            $('.player1').css('border', '0px')
-                            $('.player2').css('border', '1px solid pink')
+                            $('.player1').css('box-shadow', 'none')
+                            $('.player2').css('box-shadow', '-1px 1px 5px 4px red')
                             curr_player = 'player2'
                         }
                         else{
-                            $('.player1').css('border', '1px solid pink')
-                            $('.player2').css('border', '0px')
+                            $('.player1').css('box-shadow', '-1px 1px 5px 4px red')
+                            $('.player2').css('box-shadow', 'none')
                             curr_player = 'player1'
                         }
                         canClick = true
@@ -229,7 +308,7 @@ function cardListener(cards){
                 if (p1_score > p2_score){
                     $('.win-container').html("\
                     <div class='win-content'> \
-                        Player1 Won! \
+                        Player 1 Won! \
                     </div>")
                     p1_game_score++
                     $('.player1-score').html('<div class="player1-score">'+p1_game_score+'</div>')
@@ -237,7 +316,7 @@ function cardListener(cards){
                 else if (p1_score < p2_score){
                     $('.win-container').html("\
                     <div class='win-content'> \
-                        Player2 Won! \
+                        Player 2 Won! \
                     </div>")
                     p2_game_score++
                     $('.player2-score').html('<div class="player2-score">'+p2_game_score+'</div>')
