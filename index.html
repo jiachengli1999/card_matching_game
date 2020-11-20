@@ -13,16 +13,27 @@
 </head>
 <body>
     <h1 id="header">Card Matching Game</h1>
-    <button class='start-btn' onclick="main()" disabled='disabled'>Start</button>
-    <div id="theme-container">
-        <div class="dropdown">
-            <button class="dropbtn">Choose Your Theme</button>
-            <div id="theme-dropdown" class="dropdown-content">
-                <div id="among-us-option">Among Us</div>
+    <div class="btn-container">
+        <button class='start-btn' onclick="main()" disabled='disabled'>Start</button>
+        <div id="theme-container">
+            <div class="dropdown">
+                <button class="dropbtn">Choose Your Theme</button>
+                <div id="theme-dropdown" class="dropdown-content">
+                    <div id="among-us-option">Among Us</div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="score-container">
+        <div class="player1-score">0</div>
+        <div class="player2-score">0</div>
+    </div>
+
     <div class="game-section">
+        <div class="player-container">
+            <div class="player1" ></div>
+            <div class="player2" ></div>
+        </div>
         <div class='grid-container'>
             <div class='initial-card' id='1'></div>
             <div class='initial-card' id='2'></div>
@@ -49,10 +60,10 @@
             <div class='initial-card' id='23'></div>
             <div class='initial-card' id='24'></div>
         </div>
-        <div class="win-container">
-            <div class="win-content">
-                Congratz you won!
-            </div>
+    </div>
+    <div class="win-container">
+        <div class="win-content">
+            Congratz you won!
         </div>
     </div>
 </body>

@@ -9,6 +9,11 @@ let clicked_id = null
 let canClick = false 
 let matched = 0
 let themeSelected = false
+let p1_score = 0
+let p2_score = 0
+let p1_game_score = 0
+let p2_game_score = 0
+let curr_player = 'player1'
 
 
 function rand(max) {
@@ -78,7 +83,18 @@ const dropdownOptionsListners = () => {
         <audio id='bgm' controls autoplay loop> \
             <source src='./among_us_assets/Among_Us.mp3' type='audio/mpeg'> \
         </audio>");
-
+        $('.player1').css('background-image', "url('./among_us_assets/red.PNG')")
+        $('.player2').css('background-image', "url('./among_us_assets/orange.PNG')")
+        $('.score-container').css({
+            "color":"#ffffff",
+            "font-family": "'Amatic SC', cursive",
+            "font-size" : "3rem",
+        });
+        $('.win-container').css({
+            "color":"black",
+            "font-family": "'Amatic SC', cursive",
+            "font-size" : "3rem",
+        })
         //enable start button once a theme has been selected
         $('.start-btn').removeAttr("disabled");
     });
@@ -114,6 +130,9 @@ function main(){
     clicked_id = null 
     canClick = false 
     matched = 0
+    p1_score = 0
+    p2_score = 0
+    curr_player = 'player1'
 
     // shuffle
     let cards = shuffle(pickRandomImages(amongUsImages, 12));
@@ -143,24 +162,24 @@ function main(){
         setTimeout(function(){
             $('#inner-card-'+i).toggleClass('flipped')
             canClick = true
-            reset = true
             // re-enable button
-            // $('.start-btn').prop("disabled",false);
             $('.start-btn').removeAttr("disabled");
         }, 2000)
     }
 
+    // highlight curr_player turn
+    $('.player1').css('border', '1px solid white')
+
     // add click listener for each card
     cardListener(cards)
+
 }
 
 function cardListener(cards){
     grid_container.find('.card').bind('click', function(){
-        // get card id
+        console.log('p1:', p1_score, ' p2:', p2_score)
         let card_id = $(this).attr('id')
         // card can be clicked if not already matched, not the same card, and currently not comparing two cards
-        console.log($(this).attr('class'))
-        console.log(clickedCard, clicked_id)
         if (!($(this).hasClass('matched')) && canClick && card_id != clicked_id){
             // flip card to image
             $('#inner-card-'+card_id).toggleClass('flipped')
@@ -176,17 +195,28 @@ function cardListener(cards){
                 canClick = false
                 // if match keep on board 
                 if ($(this).attr('class') === clickedCard){
-                    console.log('matched')
                     $(this).addClass('matched');
                     $('#'+clicked_id).addClass('matched');
-                    matched++;
+                    matched++
+                    if (curr_player == 'player1'){ p1_score++ }
+                    else { p2_score++ }
                     canClick = true
                 }
-                // if not a match, then flip them over
+                // if not a match, then flip them over, and change player's turn
                 else{
                     setTimeout(function () {
                         $('#inner-card-'+card_id).toggleClass('flipped')
                         $('#inner-card-'+clicked_id).toggleClass('flipped')
+                        if (curr_player === 'player1'){
+                            $('.player1').css('border', '0px')
+                            $('.player2').css('border', '1px solid pink')
+                            curr_player = 'player2'
+                        }
+                        else{
+                            $('.player1').css('border', '1px solid pink')
+                            $('.player2').css('border', '0px')
+                            curr_player = 'player1'
+                        }
                         canClick = true
                     },1000)
                 }
@@ -195,8 +225,29 @@ function cardListener(cards){
             
             // win 
             if (matched === cards.length/2){
-                console.log('win')
                 $('.win-container').css('display', 'flex')
+                if (p1_score > p2_score){
+                    $('.win-container').html("\
+                    <div class='win-content'> \
+                        Player1 Won! \
+                    </div>")
+                    p1_game_score++
+                    $('.player1-score').html('<div class="player1-score">'+p1_game_score+'</div>')
+                }
+                else if (p1_score < p2_score){
+                    $('.win-container').html("\
+                    <div class='win-content'> \
+                        Player2 Won! \
+                    </div>")
+                    p2_game_score++
+                    $('.player2-score').html('<div class="player2-score">'+p2_game_score+'</div>')
+                }
+                else{
+                    $('.win-container').html("\
+                    <div class='win-content'> \
+                        It's a tie! \
+                    </div>")
+                }
                 canClick = false
             }
         }
@@ -206,6 +257,6 @@ function cardListener(cards){
 // close win message when click outside content 
 window.onclick = function(event) {
     if (event.target.matches('.win-container')) {
-        $('.win-container').css('display', 'none')
+        $('.win-container').css('display', 'none')        
     }
 }
