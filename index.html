@@ -19,21 +19,25 @@
             <div class="dropdown">
                 <button class="dropbtn">Choose Your Theme</button>
                 <div id="theme-dropdown" class="dropdown-content">
-                    <div id="among-us-option">Among Us</div>
-                    <div id="maplestory-option">Maplestory</div>
+                    <div class="option" id="among-us-option">Among Us</div>
+                    <div class="option" id="maplestory-option">Maplestory</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="score-container">
-        <div class="player1-score">0</div>
-        <div class="player2-score">0</div>
-    </div>
 
     <div class="game-section">
         <div class="player-container">
-            <div class="player1" ></div>
-            <div class="player2" ></div>
+            <div class="player-wrapper">
+                <div class="player" id="player1" ></div>
+                <div class="game-score">Games Won: <span id="player1-score">0</span></div>
+                <div class="round-score">Pairs Matched: <span id="player1-round-score">0</span></div>
+            </div>
+            <div class="player-wrapper">
+                <div class="player" id="player2" ></div>
+                <div class="game-score">Games Won: <span id="player2-score">0</span></div>
+                <div class="round-score">Pairs Matched: <span id="player2-round-score">0</span></div>
+            </div>
         </div>
         <div class='grid-container'>
             <div class='initial-card' id='1'></div>
@@ -61,10 +65,12 @@
             <div class='initial-card' id='23'></div>
             <div class='initial-card' id='24'></div>
         </div>
+
     </div>
     <div class="win-container">
         <div class="win-content">
-            Congratz you won!
+            <div id="win-message">You Win!</div>
+            <button id="play-again">Continue Playing?</button>
         </div>
     </div>
 </body>

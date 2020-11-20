@@ -11,14 +11,13 @@ let clickedCard = null
 let clicked_id = null 
 let canClick = false 
 let matched = 0
-let themeSelected = false
 let curr_asset = 'among_us_assets'
 let selected_images = amongUsImages
 let p1_score = 0
 let p2_score = 0
 let p1_game_score = 0
 let p2_game_score = 0
-let curr_player = 'player1'
+let curr_player = 'player2'
 let initial_state = "\
 <div class='initial-card' id='1'></div>\
 <div class='initial-card' id='2'></div>\
@@ -119,12 +118,19 @@ const dropdownOptionsListners = () => {
         <audio id='bgm' controls autoplay loop> \
             <source src='./among_us_assets/Among_Us.mp3' type='audio/mpeg'> \
         </audio>");
-        $('.player1').css('background-image', "url('./among_us_assets/red.PNG')")
-        $('.player2').css('background-image', "url('./among_us_assets/orange.PNG')")
-        $('.score-container').css({
+        $('#player1').css('background-image', "url('./among_us_assets/red.PNG')")
+        $('#player2').css('background-image', "url('./among_us_assets/orange.PNG')")
+        $('.game-score').css({
             "color":"#ffffff",
             "font-family": "'Amatic SC', cursive",
             "font-size" : "1.5rem",
+            "background" : "none",
+        });
+        $('.round-score').css({
+            "color":"#ffffff",
+            "font-family": "'Amatic SC', cursive",
+            "font-size" : "1.5rem",
+            "background" : "none",
         });
         $('.win-container').css({
             "color":"black",
@@ -161,18 +167,25 @@ const dropdownOptionsListners = () => {
         <audio id='bgm' controls autoplay loop> \
             <source src='./maplestory_assets/maplestory.mp3' type='audio/mpeg'> \
         </audio>");
-        $('.score-container').css({
+        $('.game-score').css({
             "color":"black",
             "font-family": "Maplestory",
             "font-size" : "2rem",
+            "background" : "rgba(255 ,255 ,255 ,0.5)",
+        });
+        $('.round-score').css({
+            "color":"black",
+            "font-family": "Maplestory",
+            "font-size" : "2rem",
+            "background" : "rgba(255 ,255 ,255 ,0.5)",
         });
         $('.win-container').css({
             "color":"black",
             "font-family": "Maplestory",
             "font-size" : "3rem",
         })
-        $('.player1').css('background-image', "url('./maplestory_assets/alpha.PNG')")
-        $('.player2').css('background-image', "url('./maplestory_assets/beta.PNG')")
+        $('#player1').css('background-image', "url('./maplestory_assets/alpha.PNG')")
+        $('#player2').css('background-image', "url('./maplestory_assets/beta.PNG')")
         back_image = "url('./maplestory_assets/maplestory_back.PNG')"
         curr_asset = 'maplestory_assets'
         selected_images = maplestory_images
@@ -180,26 +193,19 @@ const dropdownOptionsListners = () => {
     })
 }
 
+const continueListener = () => {
+    $('#play-again').on('click', () => {
+        $('.win-container').hide();
+        grid_container.empty();
+        grid_container.append(initial_state);
+    })
+}
+
 
 dropdownListener();
 dropdownOptionsListners();
+continueListener();
 
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-      let dropdowns = $(".dropdown-content");
-       /* if we have multiple dropdowns
-
-      for (let i = 0; i < dropdowns.length; i++) {
-        let openDropdown = dropdowns[i];
-        console.log(typeof(openDropdown));
-        openDropdown.hide();
-      }
-      */
-
-      dropdowns.hide();
-    }
-}
 
 function main(){
     //disable button 
@@ -212,9 +218,16 @@ function main(){
     matched = 0
     p1_score = 0
     p2_score = 0
-    curr_player = 'player1'
-    $('.player1').css('box-shadow', 'none')
-    $('.player2').css('box-shadow', 'none')
+    if( curr_player === 'player1'){
+        curr_player = 'player2';
+    } else {
+        curr_player = 'player1';
+    }
+    $('#player1').css('box-shadow', 'none')
+    $('#player2').css('box-shadow', 'none')
+
+    $('#player1-round-score').text(`${p1_score}`);
+    $('#player2-round-score').text(`${p2_score}`);
 
     // shuffle
     let cards = shuffle(pickRandomImages(selected_images, 12));
@@ -247,7 +260,7 @@ function main(){
     }
 
     // highlight curr_player turn
-    $('.player1').css('box-shadow', '-1px 1px 5px 4px red')
+    $('#player1').css('box-shadow', '-1px 1px 5px 4px red')
 
     // add click listener for each card
     cardListener(cards)
@@ -280,6 +293,8 @@ function cardListener(cards){
                     if (curr_player == 'player1'){ p1_score++ }
                     else { p2_score++ }
                     canClick = true
+                    $('#player1-round-score').text(`${p1_score}`);
+                    $('#player2-round-score').text(`${p2_score}`);
                 }
                 // if not a match, then flip them over, and change player's turn
                 else{
@@ -287,13 +302,13 @@ function cardListener(cards){
                         $('#inner-card-'+card_id).toggleClass('flipped')
                         $('#inner-card-'+clicked_id).toggleClass('flipped')
                         if (curr_player === 'player1'){
-                            $('.player1').css('box-shadow', 'none')
-                            $('.player2').css('box-shadow', '-1px 1px 5px 4px red')
+                            $('#player1').css('box-shadow', 'none')
+                            $('#player2').css('box-shadow', '-1px 1px 5px 4px red')
                             curr_player = 'player2'
                         }
                         else{
-                            $('.player1').css('box-shadow', '-1px 1px 5px 4px red')
-                            $('.player2').css('box-shadow', 'none')
+                            $('#player1').css('box-shadow', '-1px 1px 5px 4px red')
+                            $('#player2').css('box-shadow', 'none')
                             curr_player = 'player1'
                         }
                         canClick = true
@@ -306,26 +321,17 @@ function cardListener(cards){
             if (matched === cards.length/2){
                 $('.win-container').css('display', 'flex')
                 if (p1_score > p2_score){
-                    $('.win-container').html("\
-                    <div class='win-content'> \
-                        Player 1 Won! \
-                    </div>")
+                    $('#win-message').text("Player 1 Won!")
                     p1_game_score++
-                    $('.player1-score').html('<div class="player1-score">'+p1_game_score+'</div>')
+                    $('#player1-score').text(`${p1_game_score}`)
                 }
                 else if (p1_score < p2_score){
-                    $('.win-container').html("\
-                    <div class='win-content'> \
-                        Player 2 Won! \
-                    </div>")
+                    $('#win-message').text("Player 2 Won!")
                     p2_game_score++
-                    $('.player2-score').html('<div class="player2-score">'+p2_game_score+'</div>')
+                    $('#player2-score').text(`${p2_game_score}`)
                 }
                 else{
-                    $('.win-container').html("\
-                    <div class='win-content'> \
-                        It's a tie! \
-                    </div>")
+                    $('#win-message').text("It's a tie!")
                 }
                 canClick = false
             }
@@ -337,5 +343,23 @@ function cardListener(cards){
 window.onclick = function(event) {
     if (event.target.matches('.win-container')) {
         $('.win-container').css('display', 'none')        
+    }
+}
+
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      let dropdowns = $(".dropdown-content");
+       /* if we have multiple dropdowns
+
+      for (let i = 0; i < dropdowns.length; i++) {
+        let openDropdown = dropdowns[i];
+        console.log(typeof(openDropdown));
+        openDropdown.hide();
+      }
+      */
+
+      dropdowns.hide();
     }
 }
