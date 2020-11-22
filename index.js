@@ -260,7 +260,7 @@ function main(){
     }
 
     // highlight curr_player turn
-    $('#player1').css('box-shadow', '-1px 1px 5px 4px red')
+    $('#'+curr_player).css('box-shadow', '-1px 1px 5px 4px red')
 
     // add click listener for each card
     cardListener(cards)
